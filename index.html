@@ -1,0 +1,169 @@
+<html>
+    <head>
+        <style>
+            body{
+                background-color: black;
+                overflow: hidden;
+            }
+            #gradient{
+                float:left;
+                width:50px;
+            }
+            #canvas{
+                float:left;
+            }
+            input{
+                border:none;
+                //all:unset;
+            }
+            #pirmas, #antras, #trecias{
+                width:100px;
+                height:40px;
+                border:none;
+            }
+            #pirmas:active, input:focus{
+                outline: none;
+            }
+        </style>
+    </head>
+    <body onload="drawsec()">
+        <canvas id="canvas" style="border: 1px solid"></canvas>
+        <div id="gradient">
+            <input type="color" id="pirmas">
+            <input type="color" id="antras">
+            <input type="color" id="trecias">
+        </div>
+        <script>
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            var r = window.innerHeight/2 - window.innerHeight/20;
+            var xm = window.innerWidth/2-300;
+            var ym = window.innerHeight/2;
+            var laip = 0;
+            var min=84;
+            var val=390;
+            var modifier = 10;
+            var temp1 = new Date();
+            val = temp1.getHours() * 30;
+            min = temp1.getMinutes() * 6;
+            laip = temp1.getSeconds() * 6;
+            ctx.fillStyle = "#FF0000";
+            document.getElementById("pirmas").value="#0f19d5";
+            document.getElementById("antras").value="#f80044";
+            document.getElementById("trecias").value="#ef0606";
+            document.getElementById("canvas").height = window.innerHeight;
+            document.getElementById("canvas").width = window.innerWidth-600;
+            function clean(){
+                ctx.clearRect(0,0,canvas.width,canvas.heigh);
+                var w = canvas.width;
+                canvas.width = 1;
+                canvas.width = w;
+            }
+            function drawsec(){
+                clean();
+                drawmin();
+                ctx.beginPath();
+                ctx.arc(xm,ym,r,0,2*Math.PI);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(xm,ym);
+                var ri = r-(r/modifier);
+                var xp = xm;
+                var yp = ym-ri;
+                var laip2 = (180-laip)/2;
+                if (laip>360){
+                    laip-=360;
+                    min+=6;
+                }
+                var s2 = (ri*Math.sin(Math.PI*laip/180)/Math.sin(Math.PI*(laip2/180)));
+                var y =(-1*(Math.pow(ri,2)-(Math.pow(xm,2)+Math.pow(ym,2)))+(Math.pow(s2,2)-(Math.pow(xp,2)+Math.pow(yp,2))))/((-2*ym)+(2*yp));
+                y*=-1;
+                var cc = Math.pow(s2,2)-(Math.pow(xp,2)+Math.pow(yp,2))+(2*yp*y)-Math.pow(y,2);
+                cc*=-1;
+                var d=Math.sqrt(Math.pow(2*xp,2)-4*cc);
+                var x = (2*xp+d)/2;
+                if(laip>180){
+                    x = (2*xp-d)/2;
+                }
+                else if(laip == 180){
+                    x = xm;
+                    y = ym+ri;
+                }
+                ctx.lineTo(x,y);
+                ctx.closePath();
+                ctx.lineWidth=1;
+                ctx.stroke();
+                var temp=1;
+                laip+=(6/temp);
+                setTimeout(function(){drawsec()},(1000/temp));
+            }
+            function drawmin(){
+                drawval();
+                ctx.beginPath();
+                ctx.moveTo(xm,ym);
+                var ri = r-(r/modifier)*2;
+                var xp = xm;
+                var yp = ym-ri;
+                var laip2 = (180-min)/2;
+                if (min>360){
+                    min-=360;
+                    val+=30;
+                }
+                var s2 = (ri*Math.sin(Math.PI*min/180)/Math.sin(Math.PI*(laip2/180)));
+                var y =(-1*(Math.pow(ri,2)-(Math.pow(xm,2)+Math.pow(ym,2)))+(Math.pow(s2,2)-(Math.pow(xp,2)+Math.pow(yp,2))))/((-2*ym)+(2*yp));
+                y*=-1;
+                var cc = Math.pow(s2,2)-(Math.pow(xp,2)+Math.pow(yp,2))+(2*yp*y)-Math.pow(y,2);
+                cc*=-1;
+                var d=Math.sqrt(Math.pow(2*xp,2)-4*cc);
+                var x = (2*xp+d)/2;
+                if(min>180){
+                    x = (2*xp-d)/2;
+                }
+                else if(min == 180){
+                    x = xm;
+                    y = ym+ri;
+                }
+                ctx.lineTo(x,y);
+                ctx.closePath();
+                ctx.lineWidth=2;
+                ctx.stroke();
+            }
+            function drawval(){
+                ctx.beginPath();
+                ctx.moveTo(xm,ym);
+                var ri = r-(r/modifier)*3;
+                var xp = xm;
+                var yp = ym-ri;
+                var laip2 = (180-val)/2;
+                if (val>360){
+                    val-=360;
+                }
+                var s2 = (ri*Math.sin(Math.PI*val/180)/Math.sin(Math.PI*(laip2/180)));
+                var y =(-1*(Math.pow(ri,2)-(Math.pow(xm,2)+Math.pow(ym,2)))+(Math.pow(s2,2)-(Math.pow(xp,2)+Math.pow(yp,2))))/((-2*ym)+(2*yp));
+                y*=-1;
+                var cc = Math.pow(s2,2)-(Math.pow(xp,2)+Math.pow(yp,2))+(2*yp*y)-Math.pow(y,2);
+                cc*=-1;
+                var d=Math.sqrt(Math.pow(2*xp,2)-4*cc);
+                var x = (2*xp+d)/2;
+                if(val>180){
+                    x = (2*xp-d)/2;
+                }
+                else if(val == 180){
+                    x = xm;
+                    y = ym+ri;
+                }
+                ctx.lineTo(x,y);
+                ctx.closePath();
+                ctx.lineWidth=3;
+                // Fill with gradient
+                var gradient=ctx.createLinearGradient(0,0,c.width,0);
+                ctx.strokeStyle=gradient;
+                gradient.addColorStop("0",document.getElementById("pirmas").value);
+                gradient.addColorStop("0.5",document.getElementById("antras").value);
+                gradient.addColorStop("1.0",document.getElementById("trecias").value);
+                ctx.stroke();
+            }
+        </script>
+    </body>
+</html>
